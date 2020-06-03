@@ -1,6 +1,6 @@
 import cv2 as cv
-import pygame
 import numpy as np
+from keyboard import ASRKeyboard
 
 ESC_KEY = 27
 
@@ -8,8 +8,17 @@ cap_region_x_begin = 0.5  # start point/total width
 cap_region_y_end = 0.8  # start point/total width
 
 
+def config_keyboard() -> ASRKeyboard:
+    return ASRKeyboard(
+        bg_capture_keys=[ord('b'), ord('B')],
+        bg_reset_keys=[ord('r'), ord('R')],
+        exit_keys=[ESC_KEY]
+    )
+
+
 def main():
     camera = cv.VideoCapture(0)
+    asr_keyboard = config_keyboard()
 
     while camera.isOpened():
         # Capture frame-by-frame
@@ -23,7 +32,12 @@ def main():
         cv.imshow('original', frame)
 
         key = cv.waitKey(10)
-        if key == ESC_KEY:
+        print(key)
+        if asr_keyboard.is_exit_key(key):
+            break
+        elif asr_keyboard.is_bg_capture_key(key):
+            break
+        elif asr_keyboard.is_bg_reset_key(key):
             break
 
     camera.release()
